@@ -1,195 +1,135 @@
 <template>
-  <div class="search-wrapper" :class="{ 'is-focused': isFocused }">
-    <!-- 搜索图标（左侧） -->
-    <svg
-      class="search-icon"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.8"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      :stroke="iconColor"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
+  <div class="city-picker">
+    <!-- 左侧城市列表 -->
+    <div class="city-list" ref="cityListRef">
+      <div v-for="(cities, letter) in sortedCityData" :key="letter" class="letter-group">
+        <div class="letter-title" :id="`letter-${letter}`">
+          {{ letter }}
+        </div>
+        <ul>
+          <li v-for="city in cities" :key="city.adcode">
+            {{ city.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
-    <!-- 输入框 -->
-    <input
-      ref="inputRef"
-      type="text"
-      class="search-input"
-      :placeholder="placeholder"
-      v-model="keyword"
-      @focus="isFocused = true"
-      @blur="isFocused = false"
-      @input="handleInput"
-    />
-
-    <!-- 清除按钮（右侧） -->
-    <button
-      v-if="keyword.length > 0"
-      class="clear-btn"
-      @click="clearInput"
-      aria-label="清除搜索内容"
-    >
-      <!-- 使用内联 SVG 的 "X" 图标，颜色可随父级改变 -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        :stroke="iconColor"
+    <!-- 右侧索引 -->
+    <div class="index-bar">
+      <div
+        v-for="letter in sortedLetters"
+        :key="letter"
+        class="index-item"
+        @click="scrollToLetter(letter)"
       >
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
-    </button>
+        {{ letter }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { getCites } from '@/views/position/getCites' // 导入获取城市数据的函数
+// 存储原始数据
+const cityData = ref({})
 
-// props 定义（可定制）
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  placeholder: {
-    type: String,
-    default: '搜索位置、攻略…',
-  },
-  iconColor: {
-    type: String,
-    default: '#999', // 默认灰色，可传入任意颜色
-  },
-})
-
-const emit = defineEmits(['update:modelValue', 'search'])
-
-const keyword = ref(props.modelValue)
-const isFocused = ref(false)
-const inputRef = ref(null)
-
-// 双向绑定：当内部变化时同步到父组件
-watch(keyword, (newVal) => {
-  emit('update:modelValue', newVal)
-})
-
-// 父组件传入的 modelValue 变化时同步到内部
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    if (newVal !== keyword.value) {
-      keyword.value = newVal
-    }
-  },
-)
-
-// 输入事件（可触发搜索）
-const handleInput = () => {
-  // 可在此处添加防抖搜索
-  emit('search', keyword.value)
+// 请求数据
+const fetchCities = async () => {
+  try {
+    const res = await getCites() // 你的接口地址
+    // res.data 已经是解析后的对象，如 { cityByLetter: { A: [...], B: [...] } }
+    cityData.value = res.record.cityByLetter || {}
+  } catch (error) {
+    console.error('获取城市数据失败', error)
+  }
 }
 
-// 清空输入
-const clearInput = () => {
-  keyword.value = ''
-  emit('search', '') // 通知父组件搜索清空
-  inputRef.value?.focus() // 清空后继续聚焦输入框
+// 排序字母（确保 A-Z 顺序）
+const sortedLetters = computed(() => {
+  return Object.keys(cityData.value).sort()
+})
+
+// 按字母顺序获取城市列表，方便模板遍历
+const sortedCityData = computed(() => {
+  const result = {}
+  sortedLetters.value.forEach((letter) => {
+    result[letter] = cityData.value[letter] || []
+  })
+  return result
+})
+
+// 滚动到指定字母区块
+const cityListRef = ref(null)
+const scrollToLetter = (letter) => {
+  // 方式1：通过 id 获取元素并 scrollIntoView
+  const target = document.getElementById(`letter-${letter}`)
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  // 方式2：如果使用了 ref，也可通过 ref 查找子元素（略）
 }
 
-// 暴露给父组件，以便重置或聚焦
-defineExpose({
-  focus: () => inputRef.value?.focus(),
-  clear: clearInput,
+// 组件挂载后请求数据
+onMounted(() => {
+  fetchCities()
 })
 </script>
 
 <style scoped>
-.search-wrapper {
+.city-picker {
+  display: flex;
+  height: 500px; /* 固定高度，产生滚动 */
   position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 360px;
-  margin: 0 auto;
-  background-color: #f3f4f6;
-  border-radius: 9999px; /* 全圆角 */
-  padding: 0 16px;
-  transition:
-    background-color 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
-  border: 1.5px solid transparent;
 }
-
-.search-wrapper.is-focused {
-  background-color: #ffffff;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.15);
-  transform: scale(1.02);
-}
-
-/* 搜索图标 */
-.search-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  transition: stroke 0.2s;
-}
-
-/* 输入框 */
-.search-input {
+.city-list {
   flex: 1;
-  height: 44px;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  color: #1f2937;
+  overflow-y: auto;
+  padding-right: 40px;
+}
+.letter-group {
+  margin-bottom: 20px;
+}
+.letter-title {
+  font-weight: bold;
+  background: #f5f5f5;
+  padding: 4px 10px;
+  border-radius: 4px;
+  position: sticky;
+  top: 0; /* 使字母标题吸顶 */
+  z-index: 1;
+}
+ul {
+  list-style: none;
   padding: 0;
-  min-width: 0; /* 防止撑开 */
+  margin: 0;
 }
-
-.search-input::placeholder {
-  color: #9ca3af;
-  font-weight: 400;
+li {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
 }
-
-/* 清除按钮 */
-.clear-btn {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  margin-left: 8px;
-  background: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
+.index-bar {
+  position: sticky;
+  top: 0;
+  right: 0;
+  width: 30px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 50%;
-  transition: background-color 0.2s;
+  background: #fff;
+  border-left: 1px solid #ddd;
+  height: 100%;
+  overflow-y: auto;
 }
-
-.clear-btn:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+.index-item {
+  font-size: 12px;
+  padding: 2px 0;
+  cursor: pointer;
+  color: #409eff;
+  user-select: none;
 }
-
-.clear-btn svg {
-  width: 18px;
-  height: 18px;
-  pointer-events: none; /* 让点击事件由 button 处理 */
+.index-item:hover {
+  background: #eee;
 }
 </style>

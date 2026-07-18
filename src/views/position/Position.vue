@@ -1,73 +1,101 @@
 <template>
-  <div class="container">
-    <!-- 整个搜索栏容器，flex 水平排列 -->
-    <div class="position-search">
-      <!-- 搜索图标 -->
-      <img src="@/assets/img/position/search.svg" alt="" />
-      <!-- 输入框，双向绑定 searchText -->
-      <input type="text" placeholder="位置/地区/区域" v-model="searchText" />
-      <!-- 清除按钮，当 searchText 有值时显示，点击清空 -->
-      <img
-        src="@/assets/img/position/cancel_filled.svg"
-        alt="清除"
-        @click="searchText = ''"
-        v-show="searchText"
-      />
-    </div>
-    <!-- 取消按钮，点击执行 router.back() -->
-    <span @click="router.back()">取消</span>
+  <Search />
+  <!-- 两个标签 城市和省份  -->
+  <div class="position-tabs">
+    <span @click="tab = 'city'">城市</span>
+    <span @click="tab = 'province'">省份</span>
   </div>
+
+  <!-- 热门城市 -->
+  <div class="position-hot-cities">
+    <div>热门城市</div>
+    <div class="position-hot-cities-list">
+      <div v-for="city in cityData?.cityData?.hotCities?.slice(1)" :key="city.name">
+        {{ city.name }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 城市列表 -->
+  <div class="position-cities" v-for="letter in Object.keys(cities)" :key="letter">
+    <span>{{ letter }}</span>
+    <div v-for="item in cities[letter]" :key="item.name">
+      {{ item.name }}
+    </div>
+  </div>
+
   <!-- 仅用于调试，显示当前搜索词 -->
-  <p>当前搜索词：{{ searchText }}</p>
+  <!-- <p>当前搜索词：{{ searchText }}</p> -->
+
+  <!-- // 城市列表 -->
 </template>
 <script setup>
-import { ref } from 'vue' // 导入 ref 创建响应式数据
+import { ref, computed } from 'vue' // 导入 ref 创建响应式数据，computed 计算属性，根据 tab 切换显示城市或省份列表
 import { useRouter } from 'vue-router' // 获取路由实例
+import { getCites } from '@/views/position/getCites' // 导入获取城市数据的函数
+import Search from '@/views/position/components/search.vue' // 导入搜索栏组件
 const router = useRouter() // 路由实例，用于返回
 
 const searchText = ref('') // 搜索关键词，响应式
 
-const handleSearch = (keyword) => {
-  console.log('搜索关键词：', keyword)
-  // 这里可以调用 API 或路由跳转等
-}
-// 注意：handleSearch 定义了但从未调用，目前只用作占位
+const cityData = ref({
+  hotCities: [],
+  cityByLetter: [],
+  provinceByLetter: [],
+}) // 城市数据列表，响应式
+
+const cityByLetter = ref('')
+const provinceByLetter = ref('')
+
+// 获取城市数据
+getCites().then((res) => {
+  cityData.value = res.record
+  cityByLetter.value = res.record.cityByLetter
+  provinceByLetter.value = res.record.provinceByLetter
+})
+// 根签切换，响应式，默认显示城市
+const tab = ref('city') // 标签切换，响应式，默认显示城市
+const cities = computed(() => {
+  console.log(tab)
+  console.log(cityData)
+  return tab.value === 'city' ? cityByLetter.value : provinceByLetter.value
+})
 </script>
 <style scoped lang="scss">
-.container {
-  display: flex; // 水平弹性布局
-  margin: 10px; // 上外边距 10px
-  align-items: center; // 垂直居中
-  // height: 25px; // 固定高度，过小导致溢出
-  // 缺少 width 定义，默认 100%
-  .position-search {
+.position-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.position-hot-cities {
+  font-size: 18px;
+  color: #1f2937;
+  font-weight: 500;
+  margin-bottom: 10px;
+  .position-hot-cities-list {
+    margin-top: 10px;
     display: flex;
-    align-items: center;
-    border-radius: 25px; // 圆角
-    padding: 2px; // 内边距 10px
-    border: solid 1px #d1d5db; // 边框颜色
-    background-color: #f5f5f5; // 背景色
-    flex: 1; // 占据剩余空间（与“取消”按钮平分，但取消是 span 无弹性，所以占剩余全部）
-    img {
-      height: 18px; // 图标高度固定，宽度自适应
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
 
-      margin-right: 5px; // 图标与输入框间距 5px
-    }
-    input {
-      flex: 1; // 占据剩余宽度
-      border: none;
-      outline: none;
-      height: 18px; // 固定高度
-      background-color: #f5f5f5; // 与父背景一致
+    div {
+      width: 100px;
+      height: 25px;
+      border-radius: 12px;
+      background-color: var(--primary-color);
+      border: solid 1px #d1d5db;
+      padding: 2px;
+      text-align: center;
+      font-size: 18px;
+      color: #1f2937;
+      font-weight: 500;
+      margin-bottom: 5px;
     }
   }
-  span {
-    margin-left: 7px;
-    margin-right: 10px;
-    font-size: 18px;
-    color: #1f2937;
-    font-weight: 500;
-    // 点击事件绑定了 router.back()
-  }
+}
+.position-cities {
+  min-height: 250px;
+  border: solid 1px #d1d5db;
 }
 </style>

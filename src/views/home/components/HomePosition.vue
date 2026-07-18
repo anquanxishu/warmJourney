@@ -2,7 +2,7 @@
   <div class="home-position">
     <span class="position" @click="router.push('/position')">当前位置</span>
 
-    <span class="position-select">位置选择</span>
+    <span class="position-select" @click="router.push('/test')">位置选择</span>
     <img src="@/assets/img/home/icon_location.png" alt="" />
   </div>
 </template>

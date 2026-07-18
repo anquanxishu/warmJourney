@@ -47,6 +47,14 @@ const router = createRouter({
         showTabBar: true,
       },
     },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/views/test/Test.vue'),
+      meta: {
+        showTabBar: false,
+      },
+    },
   ],
 })
 
