@@ -115,7 +115,6 @@ const cities = computed(() => {
 
 // 点击城市或省份，返回上一页并传递参数 name
 const handleClick = (city) => {
-  console.log(city.name)
   positionStore.setCurrentCity(city)
   router.back()
 }
