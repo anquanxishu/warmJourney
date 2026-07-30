@@ -8,3 +8,9 @@
 body {
   font-size: 14px;
 }
+/* 文字淡化效果 */
+.text-fade {
+  font-size: 14px;
+  font-weight: 500;
+  color: #999;
+}

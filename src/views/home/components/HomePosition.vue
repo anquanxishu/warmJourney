@@ -2,7 +2,7 @@
   <div class="home-position">
     <span class="position">{{ positionStore.getCurrentCityName }}</span>
 
-    <span class="position-select" @click="router.push('/position')">位置选择</span>
+    <span class="position-select" @click="router.push('/position')">我的位置</span>
     <img src="@/assets/img/home/icon_location.png" alt="" />
   </div>
 </template>
@@ -21,15 +21,17 @@ const positionStore = usePositionStore() // 实例化位置状态管理
   flex-direction: row;
   align-items: center;
   font-size: 14px;
+  margin: 10px 20px 0 20px;
   .position {
     flex: 1;
     font-size: 18px;
-    margin-left: 10px;
+
     font-weight: 500;
   }
 
   img {
     width: 20px;
+    margin-left: 10px;
   }
 }
 </style>
