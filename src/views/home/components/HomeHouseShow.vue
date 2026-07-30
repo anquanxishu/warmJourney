@@ -2,13 +2,16 @@
   <h1>热门精选</h1>
   <div class="homeHouseShow">
     <div v-for="item in houseList" :key="item.data.houseId" class="homeHouseShow-item">
-      <img :src="item.data.image.url" alt="" />
-      <div>{{ item.data.houseName }}</div>
+      <HouseShowV9 :houseList="item.data" v-if="item.discoveryContentType === 9" />
+      <HouseShowV3 :houseList="item.data" v-else />
     </div>
   </div>
 </template>
 <script setup>
 import { ref } from 'vue'
+import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
+import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
+
 const props = defineProps({
   houseList: {
     type: Array,
@@ -26,9 +29,6 @@ const props = defineProps({
   .homeHouseShow-item {
     width: 48%;
     margin-bottom: 10px;
-    img {
-      width: 100%;
-    }
   }
 }
 </style>
