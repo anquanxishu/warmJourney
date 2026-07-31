@@ -1,19 +1,21 @@
-import { service } from '@/utils/request'
-const baseUrl = service.defaults.baseURL + '/home'
-console.log(baseUrl, 'baseurl')
-service.defaults.baseURL = baseUrl
+import { createInstanceWithPrefix } from '@/utils/request'
+
+// 创建模块专属实例
+export const moduleInstance = createInstanceWithPrefix('/home')
+
 // 热门建议
 export const getHotSuggests = async () => {
-  const res = await service.get('/hotSuggests')
+  const res = await moduleInstance.get('/hotSuggests')
   return res
 }
 // 推荐类别
 export const getCategories = async () => {
-  const res = await service.get('/categories')
+  const res = await moduleInstance.get('/categories')
   return res
 }
 // 房屋列表
+// 分页获取房屋列表
 export const getHouseList = async (page) => {
-  const res = await service.get(`/houseList?page=${page}`)
+  const res = await moduleInstance.get(`/houseList?page=${page}`)
   return res
 }
