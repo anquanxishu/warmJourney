@@ -4,13 +4,15 @@
       class="tabItem"
       v-for="(item, index) in tabs"
       :key="item"
-      :class="{ active: itemActiveArr[index] }"
-      @click="bar(item, index)"
+      :class="{ active: item.path === router.currentRoute.value.path }"
+      @click="router.push(item.path)"
     >
       <img
         class="img"
         :src="
-          itemActiveArr[index] ? getTabbarImgPath(item.imageActive) : getTabbarImgPath(item.image)
+          item.path === router.currentRoute.value.path
+            ? getTabbarImgPath(item.imageActive)
+            : getTabbarImgPath(item.image)
         "
         alt=""
       />
@@ -32,13 +34,6 @@ const tabbarImageModules = import.meta.glob('../../assets/img/tabbar/*.png', {
 const getTabbarImgPath = (imgPath) => {
   const fullPath = `../../assets/img/${imgPath}`
   return tabbarImageModules[fullPath]
-}
-
-// 路径的改变和颜色的切换
-const bar = (item, index) => {
-  router.push(item.path)
-  itemActiveArr.value = []
-  itemActiveArr.value[index] = 1
 }
 </script>
 <style scoped lang="scss">

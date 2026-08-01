@@ -44,12 +44,15 @@
       </div>
     </div>
     <!-- 搜索按钮 -->
-    <button>搜索</button>
+    <button @click="router.push({ name: 'searchHome', query: { search: props.search } })">
+      搜索
+    </button>
     <!-- 房间信息 -->
   </div>
 </template>
 <script setup>
 import { ref, watch, computed, defineProps } from 'vue'
+import router from '@/router'
 
 import dayjs from 'dayjs'
 // 入住时间
@@ -74,6 +77,17 @@ const props = defineProps({
     default: '',
   },
 })
+
+const obj = {
+  search: props.search,
+  startTime: startTime.value,
+  endTime: endTime.value,
+  night: night.value,
+  startDate: startDate.value,
+  endDate: endDate.value,
+  price: '不限',
+  person: '不限',
+}
 // 点击日期选择器
 const startTimeRef = ref(null)
 const endTimeRef = ref(null)

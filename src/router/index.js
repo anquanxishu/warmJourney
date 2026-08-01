@@ -48,6 +48,17 @@ const router = createRouter({
       },
     },
     {
+      path: '/searchHome',
+      name: 'searchHome',
+      component: () => import('@/views/home/components/SearchHome.vue'),
+      meta: {
+        showTabBar: false,
+      },
+    },
+
+    // 测试路由仅供测试使用  开发环境使用
+    // 生产环境请注释掉
+    {
       path: '/test',
       name: 'test',
       component: () => import('@/views/test/Test.vue'),

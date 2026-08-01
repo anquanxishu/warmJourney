@@ -16,8 +16,8 @@
           <!--评分和价格 一行 -->
           <div class="homeHouseShow-score-price">
             <!-- 评分使用图片展示 -->
-            <span>{{ houseList.commentScore }}</span>
-            <span>{{ houseList.productPrice }}</span>
+            <Rating :rating="Number(houseList.commentScore)" />
+            <span>￥{{ houseList.productPrice }}</span>
           </div>
         </div>
       </div>
@@ -26,6 +26,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import Rating from '@/components/rating/Rating.vue'
 defineProps({
   houseList: {
     type: Object,
@@ -56,6 +57,20 @@ defineProps({
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+    }
+    .homeHouseShow-bottom {
+      .homeHouseShow-score-price {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        font-size: 14px;
+        span {
+          display: flex;
+          align-items: center;
+        }
+      }
     }
   }
 }
