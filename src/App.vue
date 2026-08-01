@@ -18,6 +18,8 @@ import { useRoute } from 'vue-router'
   flex-direction: column;
   height: 100vh; /* 占满视口高度 */
   overflow: hidden; /* 防止整体滚动 */
+  position: relative;
+  margin: 4px;
 }
 .main {
   flex: 1;

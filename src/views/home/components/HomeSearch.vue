@@ -126,8 +126,6 @@ watch(startTime, (newVal, oldVal) => {
   flex-wrap: wrap;
   gap: 10px;
   div {
-    text-align: left;
-    // border: 1px solid #999;
     padding: 3px 5px;
     border-radius: 50px;
   }

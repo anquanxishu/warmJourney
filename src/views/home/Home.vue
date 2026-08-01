@@ -16,25 +16,23 @@
         <div>{{ item.title }}</div>
       </div>
     </div>
-    <!-- 濒宿展示 -->
-    <HomeHouseShow :house-list="houseList" />
+    <!-- 房屋展示 -->
+    <HomeHouseShow :house-list="houseList" @load-more="loadMore" />
   </div>
 </template>
 <script setup>
-import { ref, watch, computed, reactive, defineProps } from 'vue'
+import { ref } from 'vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomePosition from './components/HomePosition.vue'
 import HomeSearch from './components/HomeSearch.vue'
-import { getHotSuggests, getHouseList, getCategories } from './homeRequest.js'
 import HomeHouseShow from './components/HomeHouseShow.vue'
-
-const search = ref('')
-// 搜索
+import { getHotSuggests, getHouseList, getCategories } from './homeRequest.js'
+// 热门精选
 const hotSuggests = ref([])
-// 濒宿展示
+// 房屋列表
 const houseList = ref([])
-// �宿展示
-const houseShow = ref([])
+// 分页
+const page = ref(1)
 // 推荐类别
 const categories = ref([])
 getCategories()
@@ -45,13 +43,18 @@ getCategories()
     console.log(err)
   })
 // 房屋列表
-getHouseList(1)
-  .then((res) => {
-    houseList.value = res.data
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+// 加载下一页
+const loadMore = () => {
+  getHouseList(page.value)
+    .then((res) => {
+      houseList.value.push(...res.data)
+      page.value++
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+loadMore()
 // 搜索
 getHotSuggests()
   .then((res) => {

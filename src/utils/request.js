@@ -25,16 +25,15 @@ service.interceptors.response.use(
     return Promise.reject(error)
   },
 )
-
 // ========= 新增：模块专属实例工厂 =========
 /**
  * 创建一个带有模块前缀的 axios 实例，并自动继承相同的拦截器
  * @param {string} modulePrefix - 模块路径前缀，如 '/home'
  * @returns {axios.AxiosInstance}
  */
-export const createInstanceWithPrefix = (modulePrefix) => {
+export const createInstanceWithPrefix = (prefix) => {
   const instance = axios.create({
-    baseURL: baseURL + modulePrefix,
+    baseURL: baseURL + prefix,
     timeout: 5000,
   })
   // 请求拦截器与全局一致

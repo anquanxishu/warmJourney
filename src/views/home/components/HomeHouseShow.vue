@@ -5,10 +5,13 @@
       <HouseShowV9 :houseList="item.data" v-if="item.discoveryContentType === 9" />
       <HouseShowV3 :houseList="item.data" v-else />
     </div>
+
+    <!-- 加载更多 -->
+    <div ref="loadMore" class="load-more" @click="$emit('loadMore')">加载更多</div>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
 import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
 
@@ -17,6 +20,18 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+})
+const emit = defineEmits(['loadMore'])
+
+const loadMore = ref(null)
+
+onMounted(() => {
+  const a = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      emit('loadMore')
+    }
+  })
+  a.observe(loadMore.value)
 })
 </script>
 <style scoped lang="scss">
@@ -29,6 +44,11 @@ const props = defineProps({
   .homeHouseShow-item {
     width: 48%;
     margin-bottom: 10px;
+  }
+  .load-more {
+    width: 100%;
+    text-align: center;
+    margin: 10px auto;
   }
 }
 </style>

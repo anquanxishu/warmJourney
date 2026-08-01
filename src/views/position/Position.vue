@@ -157,24 +157,25 @@ const handleClickLetter = (letter) => {
       font-weight: 500;
       margin-bottom: 10px;
       .position-hot-cities-list {
-        margin-top: 10px;
+        margin: 10px 0 0;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-around;
+        // justify-content: space-around;
+        // grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
 
         div {
-          width: 100px;
           height: 25px;
-          border-radius: 12px;
+          border-radius: 20px;
           background-color: var(--primary-color);
           border: solid 1px #d1d5db;
-          padding: 2px;
+          padding: 4px 8px;
           text-align: center;
           font-size: 18px;
           color: #1f2937;
           font-weight: 500;
-          margin-bottom: 5px;
+          margin: 5px;
         }
       }
     }
