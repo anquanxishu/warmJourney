@@ -2,11 +2,11 @@
   <div class="container">
     <!-- 搜索栏 -->
     <div class="position-search-container">
-      <Search class="position-search" />
+      <Search class="position-search" v-model="searchText" />
       <!-- 两个标签 城市和省份  -->
       <div class="position-tabs">
-        <span @click="tab = 'city'">城市</span>
-        <span @click="tab = 'province'">省份</span>
+        <span @click="tab = 'nation'">国内</span>
+        <span @click="tab = 'foreign'">国外</span>
       </div>
     </div>
 
@@ -14,28 +14,29 @@
     <div class="position-cities-container">
       <!-- 热门城市 -->
       <div class="position-hot-cities">
-        <div>热门城市</div>
+        <div><span class="temp"></span> 热门城市</div>
         <div class="position-hot-cities-list">
-          <div
-            v-for="city in cityData?.cityData?.hotCities?.slice(1)"
-            :key="city.name"
-            @click="handleClick(city)"
-          >
-            {{ city.name }}
+          <div v-for="city in cityList?.hotCities" :key="city.cityName" @click="handleClick(city)">
+            {{ city.cityName }}
           </div>
         </div>
       </div>
 
       <!-- 城市列表 -->
-      <div class="position-cities" v-for="letter in letters" :key="letter" :id="letter">
-        <div class="position-letter">{{ letter }}</div>
+      <div
+        class="position-cities"
+        v-for="item in cityList?.cities"
+        :key="item.group"
+        :id="item.group"
+      >
+        <div class="position-letter">{{ item.group }}</div>
         <div
-          v-for="item in cities[letter]"
-          :key="item.name"
+          v-for="item in item.cities"
+          :key="item.cityName"
           class="position-city"
           @click="handleClick(item)"
         >
-          {{ item.name }}
+          {{ item.cityName }}
         </div>
       </div>
 
@@ -43,11 +44,11 @@
       <div class="position-letter-search">
         <div class="position-letter-search-list">
           <div
-            v-for="letter in Object.keys(cities)"
-            :key="letter"
-            @click="handleClickLetter(letter)"
+            v-for="item in cityList?.cities"
+            :key="item.group"
+            @click="handleClickLetter(item.group)"
           >
-            {{ letter }}
+            {{ item.group }}
           </div>
         </div>
       </div>
@@ -62,7 +63,7 @@
 <script setup>
 import { ref, computed } from 'vue' // 导入 ref 创建响应式数据，computed 计算属性，根据 tab 切换显示城市或省份列表
 import { useRouter } from 'vue-router' // 获取路由实例
-import { getCites } from '@/views/position/getCites' // 导入获取城市数据的函数
+import { getCitiesAll } from '@/views/position/getCites' // 导入获取城市数据的函数
 import Search from '@/views/position/components/Search.vue' // 导入搜索栏组件
 import { usePositionStore } from '@/stores/position/position.js' // 导入位置状态管理
 const positionStore = usePositionStore() // 实例化位置状态管理
@@ -73,45 +74,29 @@ const router = useRouter() // 路由实例，用于返回
 const searchText = ref('') // 搜索关键词，响应式
 
 const cityData = ref(JSON.parse(localStorage.getItem('cityData') || '[]')) // 城市数据列表，响应式
-
-const letters = computed(() => {
-  return Object.keys(cities.value)
+const cityList = computed(() => {
+  return tab.value === 'nation' ? cityData.value?.cityGroup : cityData.value?.cityGroupOverSea
 })
 
 if (cityData.value == '') {
   // 获取城市数据  重试两次
   function bar() {
-    let a = 0
-    getCites()
+    getCitiesAll()
       .then((res) => {
         // 缓存城市数据
-        storage.setItem('cityData', res.record)
-        cityData.value = res.record
+        storage.setItem('cityData', res.data)
+        cityData.value = res.data
         a = 0
       })
       .catch((err) => {
         console.log('error', err)
-        if (a < 2) {
-          a++
-          bar()
-        }
       })
   }
   bar()
 }
 
-const cityByLetter = computed(() => {
-  return cityData.value?.cityByLetter || {}
-})
-const provinceByLetter = computed(() => {
-  return cityData.value?.provinceByLetter || {}
-})
-
 // 根签切换，响应式，默认显示城市
-const tab = ref('city') // 标签切换，响应式，默认显示城市
-const cities = computed(() => {
-  return tab.value === 'city' ? cityByLetter.value : provinceByLetter.value
-})
+const tab = ref('nation') // 标签切换，响应式，默认显示城市
 
 // 点击城市或省份，返回上一页并传递参数 name
 const handleClick = (city) => {
@@ -150,24 +135,38 @@ const handleClickLetter = (letter) => {
   .position-cities-container {
     overflow: auto;
     position: relative;
+    // 不显示滚动条
+    &::-webkit-scrollbar {
+      display: none;
+    }
     // 热门城市
     .position-hot-cities {
       font-size: 18px;
       color: #1f2937;
       font-weight: 500;
-      margin-bottom: 10px;
+      margin: 10px 0;
+
+      .temp {
+        display: inline-block;
+        height: 15px;
+        width: 3px;
+        -webkit-box-shadow: 4px 0 10px 0 rgba(255, 144, 47, 0.3);
+        box-shadow: 4px 0 10px 0 rgba(255, 144, 47, 0.3);
+        border-radius: 4px;
+        margin-right: 5px;
+
+        background: var(--tjc-theme, #ff9645);
+      }
       .position-hot-cities-list {
         margin: 10px 0 0;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        // justify-content: space-around;
-        // grid-template-columns: repeat(4, 1fr);
         gap: 10px;
 
         div {
           height: 25px;
-          border-radius: 20px;
+          border-radius: 50px;
           background-color: var(--primary-color);
           border: solid 1px #d1d5db;
           padding: 4px 8px;
@@ -175,7 +174,8 @@ const handleClickLetter = (letter) => {
           font-size: 18px;
           color: #1f2937;
           font-weight: 500;
-          margin: 5px;
+          // margin: 5px;
+          padding: 10px 20px;
         }
       }
     }

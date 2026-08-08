@@ -1,4 +1,4 @@
-import { reqInstance } from '@/utils/request'
+import { reqInstance, service } from '@/utils/request'
 
 const baseUrl = 'https://api.jsonbin.io/v3/b'
 const cityDataId = '6a59c731f5f4af5e299afc29'
@@ -9,5 +9,10 @@ export const getCites = async () => {
       'x-master-key': x_master_key,
     },
   })
+  return res
+}
+
+export const getCitiesAll = async () => {
+  const res = await service.get('/city/all')
   return res
 }

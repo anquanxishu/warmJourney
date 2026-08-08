@@ -16,13 +16,17 @@ import { useRoute } from 'vue-router'
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 占满视口高度 */
+  // 靠边影响体验 所以这里设置为98dvh
+  // 96vw 是为了在不同设备上都能正常显示
+  // 98dvh 是为了在不同设备上都能正常显示
+  height: 98dvh;
+  width: 96vw;
   overflow: hidden; /* 防止整体滚动 */
   position: relative;
-  margin: 4px;
-}
-.main {
-  flex: 1;
-  overflow: auto;
+  margin: auto;
+  .main {
+    flex: 1;
+    overflow: auto;
+  }
 }
 </style>

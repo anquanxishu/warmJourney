@@ -1,7 +1,12 @@
 <template>
   <h1>热门精选</h1>
   <div class="homeHouseShow">
-    <div v-for="item in houseList" :key="item.data.houseId" class="homeHouseShow-item">
+    <div
+      v-for="item in houseList"
+      :key="item.data.houseId"
+      class="homeHouseShow-item"
+      @click="toHouseDetail(item.data.houseId)"
+    >
       <HouseShowV9 :houseList="item.data" v-if="item.discoveryContentType === 9" />
       <HouseShowV3 :houseList="item.data" v-else />
     </div>
@@ -12,6 +17,7 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
 import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
 
@@ -24,6 +30,18 @@ const props = defineProps({
 const emit = defineEmits(['loadMore'])
 
 const loadMore = ref(null)
+
+// 路由实例
+const router = useRouter()
+// 跳转房屋详情页
+const toHouseDetail = (houseId) => {
+  router.push({
+    name: 'houseDetail',
+    query: {
+      houseId,
+    },
+  })
+}
 
 onMounted(() => {
   const a = new IntersectionObserver((entries) => {

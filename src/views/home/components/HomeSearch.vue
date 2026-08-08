@@ -44,9 +44,7 @@
       </div>
     </div>
     <!-- 搜索按钮 -->
-    <button @click="router.push({ name: 'searchHome', query: { search: props.search } })">
-      搜索
-    </button>
+    <button @click="router.push({ name: 'searchHome', query: obj })">搜索</button>
     <!-- 房间信息 -->
   </div>
 </template>

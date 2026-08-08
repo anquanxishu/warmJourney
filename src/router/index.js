@@ -55,6 +55,15 @@ const router = createRouter({
         showTabBar: false,
       },
     },
+    // 房屋详情页
+    {
+      path: '/houseDetail',
+      name: 'houseDetail',
+      component: () => import('@/views/houseDetail/HouseDetail.vue'),
+      meta: {
+        showTabBar: false,
+      },
+    },
 
     // 测试路由仅供测试使用  开发环境使用
     // 生产环境请注释掉

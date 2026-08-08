@@ -1,18 +1,27 @@
-const students = {
-  person: [
-    { name: '张三', age: 18 },
-    { name: '李四', age: 19 },
-    { name: '王五', age: 20 },
-  ],
-  class: [
-    { name: '1班', age: 18 },
-    { name: '2班', age: 19 },
-    { name: '3班', age: 20 },
-  ],
-}
-console.log(Object.keys(students))
+// 定义变量维度
+let number = 2
 
-const keys = Object.keys(students)
-for (const key of keys) {
-  console.log(students[key])
+function createArr() {
+  for (let i = 0; i < number; i++) {
+    const arr = []
+    for (let j = 0; j < 3; j++) {
+      arr.push(j)
+    }
+  }
+
+  const arr = []
+  for (let i = 0; i < 3; i++) {
+    arr.push(i)
+  }
+  const arr2 = []
+  for (let i = 0; i < 3; i++) {
+    arr2.push(arr)
+  }
+  const arr3 = []
+  for (let i = 0; i < 3; i++) {
+    arr3.push(arr2)
+  }
+  return arr3
 }
+const arr = createArr()
+console.log(arr)

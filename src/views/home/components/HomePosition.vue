@@ -1,6 +1,8 @@
 <template>
   <div class="home-position">
-    <span class="position">{{ positionStore.getCurrentCityName }}</span>
+    <span class="position" @click="router.push('/position')">{{
+      positionStore.getCurrentCityName
+    }}</span>
 
     <span class="position-select" @click="router.push('/position')">我的位置</span>
     <img src="@/assets/img/home/icon_location.png" alt="" />
