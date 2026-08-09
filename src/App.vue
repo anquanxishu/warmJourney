@@ -16,11 +16,8 @@ import { useRoute } from 'vue-router'
 .container {
   display: flex;
   flex-direction: column;
-  // 靠边影响体验 所以这里设置为98dvh
-  // 96vw 是为了在不同设备上都能正常显示
-  // 98dvh 是为了在不同设备上都能正常显示
-  height: 98dvh;
-  width: 96vw;
+  height: 100dvh;
+  width: 100vw;
   overflow: hidden; /* 防止整体滚动 */
   position: relative;
   margin: auto;

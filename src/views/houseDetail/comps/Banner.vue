@@ -80,7 +80,7 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .carousel-container {
-  width: 100%;
+  width: 96%;
   max-width: 800px;
   margin: 0 auto;
   position: relative;

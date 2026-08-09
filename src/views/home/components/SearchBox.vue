@@ -25,7 +25,7 @@
         </div>
       </div>
       <!-- 菜单 -->
-      <img src="@/assets/img/home/icon-right-menu.png" alt="" />
+      <img src="/public/warm_logo.png" alt="" />
     </div>
   </div>
 </template>

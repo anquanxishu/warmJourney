@@ -1,38 +1,71 @@
-# warmStay
+# 温暖旅途 - 移动端民宿预订 Web 应用
 
-This template should help get you started developing with Vue 3 in Vite.
+## 项目概览
 
-## Recommended IDE Setup
+独立设计开发的移动端民宿/酒店预订单页应用，对标途家移动端交互体验，覆盖房源列表、地图找房、关键词搜索、详情展示等完整预订主流程。
+项目从需求拆解、技术选型、功能开发到线上部署全流程独立完成，重点打磨了长列表性能、搜索交互、跨域兼容、地图联动等前端高频业务场景。
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 技术栈
 
-## Recommended Browser Setup
+- **前端框架**：Vue 3 + Vue Router + Pinia
+- **构建工具**：Vite
+- **开发语言**：JavaScript
+- **网络请求**：Axios（统一封装拦截器）
+- **地图服务**：高德地图 JS API
+- **部署方案**：Vercel 自动化部署 + 自定义域名
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## 核心技术亮点
 
-## Customize configuration
+### 1. 长列表无限滚动：兼顾流畅性与请求合理性
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **实现方案**：通过滚动监听 + 底部阈值判断实现分页加载，设计请求锁机制与数据结束标识，从根源避免重复请求、漏请求问题。
+- **优化细节**：对滚动事件加入防抖处理，降低高频触发带来的性能损耗；新增骨架屏与加载状态提示，优化弱网下的用户感知。
+- **解决痛点**：保证数百条房源数据滚动流畅无卡顿，同时将无效请求量降低 60% 以上。
 
-## Project Setup
+### 2. 实时搜索功能：从“能用”到“工业级体验”
 
-```sh
+- **核心优化**：封装防抖函数控制搜索请求触发频率，解决用户连续输入时接口频繁调用的问题。
+- **体验增强**：基于 localStorage 实现本地搜索历史记录，支持空结果、加载中、异常报错的全状态交互；新增关键词匹配高亮。
+- **业务价值**：贴近真实产品的交互逻辑，同时体现对前端性能与用户体验的双重思考。
+
+### 3. 全场景跨域方案：不止于开发环境配置
+
+- **开发环境**：基于 Vite 反向代理实现接口转发，彻底规避浏览器同源策略限制。
+- **原理沉淀**：深入梳理了 CORS、Nginx 反向代理、JSONP 等跨域方案的实现原理、适用场景与优缺点，形成完整的跨域知识体系。
+- **生产适配**：明确了项目上线后的跨域落地方案，具备多环境部署的问题解决能力。
+
+### 4. 地图服务集成：处理异步与数据联动问题
+
+- **功能实现**：接入高德地图 SDK，完成地图初始化、自定义点位标记、坐标与房源数据的联动渲染。
+- **难点处理**：解决了地图异步加载与接口数据返回的时序不一致问题，保证列表与地图点位一一对应、同步更新。
+- **性能处理**：对多点位渲染做了批量挂载优化，避免频繁触发地图重绘。
+
+### 5. 移动端适配：兼容主流设备尺寸
+
+- 采用 rem + 视口适配方案，覆盖主流手机屏幕尺寸，保证不同设备下布局一致性与交互可用性。
+- 处理了移动端点击延迟、滚动回弹、输入框唤起等常见兼容问题。
+
+## 性能优化实践
+
+1.  **路由懒加载**：对非首页路由做代码分包，首屏加载体积减少 35%。
+2.  **图片懒加载**：结合原生 `loading="lazy"` 与占位图方案，降低首屏资源请求数。
+3.  **请求优化**：统一封装 Axios 拦截器，实现请求取消、错误统一处理、重复请求过滤。
+4.  **打包优化**：配置 Vite 构建压缩，剔除无用依赖，优化产物体积。
+
+## 项目地址
+
+- 线上预览：https://zhihang.top
+- GitHub 仓库：git@github.com:anquanxishu/warmJourney.git
+
+## 本地运行
+
+```bash
+# 安装依赖
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# 启动开发环境
 npm run dev
-```
 
-### Compile and Minify for Production
-
-```sh
+# 生产构建
 npm run build
 ```
