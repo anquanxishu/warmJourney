@@ -5,6 +5,13 @@
     <Banner :house-picture="houseDetail?.mainPart?.topModule?.housePicture || []" />
     <!-- 无数据 不渲染 -->
     <Infos v-if="topModule" :top-module="topModule" />
+    <!-- 房屋设施 -->
+    <HouseFacility
+      v-if="dynamicModule"
+      :house-facility="dynamicModule.facilityModule.houseFacility"
+    />
+    <!-- 位置信息 -->
+    <PositionMap v-if="dynamicModule" :position-module="dynamicModule.positionModule" />
   </div>
 </template>
 <script setup>
@@ -12,6 +19,8 @@ import { ref, onMounted, computed } from 'vue'
 import HouseDetailTop from './comps/HouseDetailTop.vue'
 import Banner from './comps/Banner.vue'
 import Infos from './comps/Infos.vue'
+import HouseFacility from './comps/HouseFacility.vue'
+import PositionMap from './comps/PositionMap.vue'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
@@ -29,6 +38,7 @@ getDetailInfos(route.query.houseId)
   })
 
 const mainPart = computed(() => houseDetail.value.mainPart)
+const dynamicModule = computed(() => mainPart.value?.dynamicModule)
 const topModule = computed(() => mainPart.value?.topModule)
 // 房屋详情
 </script>

@@ -5,8 +5,8 @@
       <Search class="position-search" v-model="searchText" />
       <!-- 两个标签 城市和省份  -->
       <div class="position-tabs">
-        <span @click="tab = 'nation'">国内</span>
-        <span @click="tab = 'foreign'">国外</span>
+        <span @click="tab = 'nation'" :class="{ active: tab === 'nation' }">国内</span>
+        <span @click="tab = 'foreign'" :class="{ active: tab === 'foreign' }">国外</span>
       </div>
     </div>
 
@@ -129,6 +129,10 @@ const handleClickLetter = (letter) => {
       display: flex;
       align-items: center;
       justify-content: space-around;
+      .active {
+        color: var(--primary-color);
+        font-weight: 500;
+      }
     }
   }
   // 城市列表容器
