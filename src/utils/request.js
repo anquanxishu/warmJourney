@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 基础URL
 // const baseURL = '/api'
-const baseURL = 'http://codercba.com:1888/api'
+const baseURL = import.meta.env.VITE_API_BASE_URL
 // 全局请求拦截器
 export const service = axios.create({
   baseURL,
