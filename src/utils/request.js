@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 // 基础URL
-const baseURL = '/api'
+// const baseURL = '/api'
+const baseURL = 'http://codercba.com:1888/api'
 // 全局请求拦截器
 export const service = axios.create({
   baseURL,
