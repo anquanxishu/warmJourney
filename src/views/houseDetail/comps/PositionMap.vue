@@ -24,7 +24,9 @@ key=36710683e02c8bdd226450911abbaec3`,
 <style scoped lang="scss">
 .positionMap {
   width: 100%;
-  padding: 20px 20px 10px 20px;
+  padding: 10px 20px;
+  margin: 10px 0;
+  background-color: #fff;
 }
 img {
   width: 90%;

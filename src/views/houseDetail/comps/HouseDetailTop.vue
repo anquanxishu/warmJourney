@@ -25,6 +25,7 @@ import { ref } from 'vue'
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
+  background-color: #fff;
   img {
     width: 20px;
     height: 20px;

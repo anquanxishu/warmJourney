@@ -93,8 +93,9 @@ const nearByPosition = computed(() => props.topModule.nearByPosition)
 </script>
 <style scoped lang="scss">
 .infos {
-  width: 96%;
-  margin: 0 auto;
+  padding: 10px 10px;
+  margin: 10px 0;
+  background-color: #fff;
   .houseName {
     font-size: 20px;
     font-weight: bold;

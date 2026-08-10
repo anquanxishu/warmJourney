@@ -32,7 +32,9 @@ const props = defineProps({
 </script>
 <style scoped lang="scss">
 .houseFacility {
-  padding: 20px 20px 10px 20px;
+  padding: 10px 20px;
+  margin: 10px 0;
+  background-color: #fff;
 }
 .container {
   display: flex;

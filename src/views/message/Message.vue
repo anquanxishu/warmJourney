@@ -27,23 +27,8 @@ function play() {
   console.log('play----------')
 }
 
-const obj = {
-  name: 'message',
-  students: [
-    {
-      name: '张三',
-      age: 18,
-    },
-    {
-      name: '李四',
-      age: 19,
-    },
-  ],
-}
-// 拿到obj里students里age大于18的学生
-const adultStudents = computed(() => {
-  return obj.students.filter((item) => item.age > 18)
-})
+const str = ref('hello vue')
+console.log(str.value.split(' '))
 </script>
 <style scoped lang="scss">
 .message-title {
