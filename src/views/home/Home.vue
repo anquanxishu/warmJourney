@@ -17,7 +17,8 @@
       </div>
     </div>
     <!-- 房屋展示 -->
-    <HomeHouseShow :house-list="houseList" @load-more="loadMore" />
+    <h3>热门精选</h3>
+    <HouseShow />
   </div>
 </template>
 <script setup>
@@ -25,7 +26,7 @@ import { ref } from 'vue'
 import HomeHeader from './components/HomeHeader.vue'
 import HomePosition from './components/HomePosition.vue'
 import HomeSearch from './components/HomeSearch.vue'
-import HomeHouseShow from './components/HomeHouseShow.vue'
+import HouseShow from '@/components/HouseShow.vue'
 import { getHotSuggests, getHouseList, getCategories } from './homeRequest.js'
 // 热门精选
 const hotSuggests = ref([])

@@ -64,25 +64,6 @@ const router = createRouter({
         showTabBar: false,
       },
     },
-
-    // 测试路由仅供测试使用  开发环境使用
-    // 生产环境请注释掉
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('@/views/test/Test.vue'),
-      meta: {
-        showTabBar: false,
-      },
-    },
-    {
-      path: '/test2',
-      name: 'test2',
-      component: () => import('@/views/test/Test2.vue'),
-      meta: {
-        showTabBar: false,
-      },
-    },
   ],
 })
 

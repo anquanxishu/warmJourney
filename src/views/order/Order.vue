@@ -1,6 +1,6 @@
 <template>
-  <div class="order">
-    <h1>order</h1>
+  <div class="test">
+    <h1>正在开发中，敬请期待！</h1>
   </div>
 </template>
 <script setup>

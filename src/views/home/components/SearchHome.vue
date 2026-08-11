@@ -2,12 +2,15 @@
   <div class="searchHome">
     <!-- 顶部搜索 -->
     <SearchBox :query="query" />
+    <!-- 房屋展示 -->
+    <HouseShow />
   </div>
 </template>
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import SearchBox from '@/views/home/components/SearchBox.vue'
+import HouseShow from '@/components/HouseShow.vue'
 const router = useRouter()
 // 搜索
 const search = ref('')
