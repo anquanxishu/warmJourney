@@ -1,44 +1,68 @@
 <template>
   <div class="houseDetail">
+    <div ref="observed"></div>
     <HouseDetailTop />
     <!-- 可选链操作 -->
+
     <Banner :house-picture="houseDetail?.mainPart?.topModule?.housePicture || []" />
     <!-- 无数据 不渲染 -->
-    <Infos v-if="topModule" :top-module="topModule" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <Infos v-if="topModule" :top-module="topModule" />
+    </div>
     <!-- 当前房屋 -->
-    <CurrentHouse v-if="currentHouse" :current-house="currentHouse" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <CurrentHouse v-if="currentHouse" :current-house="currentHouse" />
+    </div>
     <!-- 评论 -->
-    <Comment v-if="dynamicModule" :comment-module="dynamicModule.commentModule" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <Comment v-if="dynamicModule" :comment-module="dynamicModule.commentModule" />
+    </div>
     <!-- 房屋设施 -->
-    <HouseFacility
-      v-if="dynamicModule"
-      :house-facility="dynamicModule.facilityModule.houseFacility"
-    />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <HouseFacility
+        v-if="dynamicModule"
+        :house-facility="dynamicModule.facilityModule.houseFacility"
+      />
+    </div>
     <!-- 预订须知 -->
-    <ReservationNotice v-if="dynamicModule" :rules-module="dynamicModule.rulesModule" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <ReservationNotice v-if="dynamicModule" :rules-module="dynamicModule.rulesModule" />
+    </div>
+
     <!-- 位置信息 -->
-    <PositionMap v-if="dynamicModule" :position-module="dynamicModule.positionModule" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <PositionMap v-if="dynamicModule" :position-module="dynamicModule.positionModule" />
+    </div>
+
     <!-- 相似房屋 -->
-    <h3 v-if="false">相似房屋</h3>
-    <HouseShow v-if="false" />
+    <div class="toTag"></div>
+    <div class="observedTag">
+      <h3>相似房屋</h3>
+      <HouseShow />
+    </div>
   </div>
   <!-- 标签导航 -->
-  <div class="tag-nav" :class="{ visible: isVisible }" v-if="false">
+  <div class="tag-nav" :class="{ visible: isVisible }">
     <div class="tag-nav-inner">
       <div
         class="tag-item"
         v-for="(tag, index) in tags"
-        :key="tag"
-        :class="{ active: currentTagIndex === index }"
-        @click="currentTagIndex = index"
+        :key="index"
+        :class="{ active: currentTagIndex == index }"
+        @click="toTag(index)"
       >
         {{ tag }}
       </div>
     </div>
   </div>
-
-  <button @click="changeVisible" class="toggle-btn" v-if="false">切换导航</button>
 </template>
+
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import HouseDetailTop from './comps/HouseDetailTop.vue'
@@ -57,7 +81,9 @@ const route = useRoute()
 import { getDetailInfos } from './getDetailInfos.js'
 // 房屋详情
 const houseDetail = ref({})
+
 // 房屋详情
+
 getDetailInfos(route.query.houseId)
   .then((res) => {
     houseDetail.value = res.data
@@ -76,14 +102,71 @@ const topModule = computed(() => mainPart.value?.topModule)
 const tags = ['概览', '房源', '点评', '设施', '须知', '位置', '推荐']
 const currentTagIndex = ref(0)
 const isVisible = ref(false)
-const changeVisible = () => {
-  isVisible.value = !isVisible.value
+const isUseNav = ref(false)
+const bar = () => {
+  // 标签滚动到对应位置
+  const tagNavItem = document.querySelectorAll('.tag-item')
+  tagNavItem[currentTagIndex.value].scrollIntoView({
+    behavior: 'smooth',
+    inline: 'center',
+  })
 }
+// 切换标签并滚动到对应位置
+const toTag = (index) => {
+  isUseNav.value = true
+  currentTagIndex.value = index
+
+  // 滚动到对应位置
+  const tagItems = document.querySelectorAll('.toTag')
+  tagItems[index].scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  })
+  bar()
+  setTimeout(() => {
+    isUseNav.value = false
+  }, 500)
+}
+const observed = ref(null)
+onMounted(() => {
+  const infoObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        isVisible.value = false
+      } else {
+        isVisible.value = true
+      }
+    })
+  })
+  infoObserver.observe(observed.value)
+  const tagObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (!isUseNav.value) {
+            currentTagIndex.value = entry.target.dataset.index
+            bar()
+          }
+        }
+      })
+    },
+    {
+      rootMargin: '-50% 0px -49% 0px',
+      threshold: [0, 0.2, 0.5, 0.8, 1], // 多设阈值，提高触发频率
+    },
+  )
+  document.querySelectorAll('.observedTag').forEach((item, index) => {
+    item.dataset.index = index
+    tagObserver.observe(item)
+  })
+})
 </script>
+
 <style scoped lang="scss">
 .houseDetail {
   background-color: #f5f5f5;
 }
+
 h3 {
   padding-left: 20px;
   background-color: white;
@@ -96,34 +179,32 @@ h3 {
   right: 0;
   transform: translateY(-100%);
   transition: transform 0.4s ease-in-out;
-  background-color: rgba(225, 225, 225, 0.8);
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
+  background-color: white;
+  &.visible {
+    transform: translateY(0);
+  }
   .tag-nav-inner {
     display: flex;
     height: 56px;
     align-items: center;
-    gap: 50px;
+    gap: 30px;
     white-space: nowrap;
     overflow-x: auto;
-  }
-}
-.tag-nav.visible {
-  transform: translateY(0);
-}
+    .tag-item {
+      margin: 0 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      padding: 5px 0;
 
-.toggle-btn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 999;
-  padding: 10px 20px;
-  background: #409eff;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  font-size: 14px;
-  box-shadow: 0px 2px 10px rgba(64, 158, 255, 0.4);
-  transition: transform 0.2s;
+      &.active {
+        color: var(--primary-color);
+        font-weight: 600;
+
+        border-bottom: 3px solid var(--primary-color);
+      }
+    }
+  }
 }
 </style>
