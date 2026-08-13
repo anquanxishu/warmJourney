@@ -18,7 +18,12 @@
     </div>
     <!-- 房屋展示 -->
     <h3>热门精选</h3>
-    <HouseShow />
+    <HouseShow
+      :house-list="houseList"
+      :loading="loading"
+      :has-more="hasMore"
+      @loadMore="loadMore"
+    />
   </div>
 </template>
 <script setup>
@@ -27,11 +32,18 @@ import HomeHeader from './components/HomeHeader.vue'
 import HomePosition from './components/HomePosition.vue'
 import HomeSearch from './components/HomeSearch.vue'
 import HouseShow from '@/components/HouseShow.vue'
-import { getHotSuggests, getHouseList, getCategories } from './homeRequest.js'
+import { getHotSuggests, getCategories } from './homeRequest.js'
+import { useHouseListStore } from '@/stores/houseList.js'
+import { storeToRefs } from 'pinia'
+const houseListStore = useHouseListStore()
+
+// 房屋列表
+const { houseList, loading, hasMore } = storeToRefs(houseListStore)
+// 加载更多
+const loadMore = houseListStore.loadMore
 // 热门精选
 const hotSuggests = ref([])
-// 房屋列表
-const houseList = ref([])
+
 // 分页
 const page = ref(1)
 // 推荐类别
@@ -45,16 +57,6 @@ getCategories()
   })
 // 房屋列表
 // 加载下一页
-const loadMore = () => {
-  getHouseList(page.value)
-    .then((res) => {
-      houseList.value.push(...res.data)
-      page.value++
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
 loadMore()
 // 搜索
 getHotSuggests()

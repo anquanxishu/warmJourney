@@ -12,22 +12,31 @@
 
     <!-- 加载更多 -->
     <div v-if="loading">加载中...</div>
-    <div v-if="!loading" class="load-more" @click="loadMore()">加载下一页</div>
+    <div v-if="!loading && hasMore" class="load-more" @click="$emit('loadMore')">加载下一页</div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
 import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
-import { useHouseListStore } from '@/stores/houseList.js'
-import { storeToRefs } from 'pinia'
-const houseListStore = useHouseListStore()
 
-// 房屋列表
-const { houseList, loading } = storeToRefs(houseListStore)
-// 加载更多
-const loadMore = houseListStore.loadMore
+const props = defineProps({
+  houseList: {
+    type: Array,
+    default: () => [],
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+  hasMore: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const emit = defineEmits(['loadMore'])
 
 // 路由实例
 const router = useRouter()
@@ -50,7 +59,6 @@ onMounted(() => {
   //   }
   // })
   // a.observe(loadMore.value)
-  loadMore()
 })
 </script>
 <style scoped lang="scss">

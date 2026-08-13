@@ -44,27 +44,20 @@
     <div class="toTag"></div>
     <div class="observedTag">
       <h3>相似房屋</h3>
-      <HouseShow />
+      <HouseShow :house-list="houseList" :has-more="false" />
     </div>
   </div>
   <!-- 标签导航 -->
-  <div class="tag-nav" :class="{ visible: isVisible }">
-    <div class="tag-nav-inner">
-      <div
-        class="tag-item"
-        v-for="(tag, index) in tags"
-        :key="index"
-        :class="{ active: currentTagIndex == index }"
-        @click="toTag(index)"
-      >
-        {{ tag }}
-      </div>
-    </div>
-  </div>
+  <NavTab
+    :tags="tags"
+    :current-tag-index="currentTagIndex"
+    :is-visible="isVisible"
+    @toTag="toTag"
+  />
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import HouseDetailTop from './comps/HouseDetailTop.vue'
 import Banner from './comps/Banner.vue'
 import Infos from './comps/Infos.vue'
@@ -75,15 +68,25 @@ import ReservationNotice from './comps/ReservationNotice.vue'
 import PositionMap from './comps/PositionMap.vue'
 import HouseShow from '@/components/HouseShow.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { getDetailInfos } from './getDetailInfos.js'
+import { getHouseList } from '../home/homeRequest.js'
+import { getRandomInt } from '@/utils/randomUtils.js'
+import NavTab from './comps/NavTab.vue'
+
+const houseList = ref([])
+// 相似房屋
+// 先使用随机代替相似房屋数据
+getHouseList(getRandomInt(1, 1)).then((res) => {
+  houseList.value = res.data
+})
+
 const router = useRouter()
 const route = useRoute()
-// 房屋详情
-import { getDetailInfos } from './getDetailInfos.js'
+
 // 房屋详情
 const houseDetail = ref({})
 
-// 房屋详情
-
+// 房屋详情的获取
 getDetailInfos(route.query.houseId)
   .then((res) => {
     houseDetail.value = res.data
@@ -98,23 +101,16 @@ const currentHouse = computed(() => houseDetail.value.currentHouse)
 const dynamicModule = computed(() => mainPart.value?.dynamicModule)
 const topModule = computed(() => mainPart.value?.topModule)
 // 房屋详情
-
+// 标签导航
 const tags = ['概览', '房源', '点评', '设施', '须知', '位置', '推荐']
 const currentTagIndex = ref(0)
 const isVisible = ref(false)
 const isUseNav = ref(false)
-const bar = () => {
-  // 标签滚动到对应位置
-  const tagNavItem = document.querySelectorAll('.tag-item')
-  tagNavItem[currentTagIndex.value].scrollIntoView({
-    behavior: 'smooth',
-    inline: 'center',
-  })
-}
+
 // 切换标签并滚动到对应位置
 const toTag = (index) => {
   isUseNav.value = true
-  currentTagIndex.value = index
+  currentTagIndex.value = Number(index)
 
   // 滚动到对应位置
   const tagItems = document.querySelectorAll('.toTag')
@@ -122,7 +118,6 @@ const toTag = (index) => {
     behavior: 'smooth',
     block: 'center',
   })
-  bar()
   setTimeout(() => {
     isUseNav.value = false
   }, 500)
@@ -144,8 +139,7 @@ onMounted(() => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           if (!isUseNav.value) {
-            currentTagIndex.value = entry.target.dataset.index
-            bar()
+            currentTagIndex.value = Number(entry.target.dataset.index)
           }
         }
       })
@@ -170,41 +164,5 @@ onMounted(() => {
 h3 {
   padding-left: 20px;
   background-color: white;
-}
-.tag-nav {
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  left: 0;
-  right: 0;
-  transform: translateY(-100%);
-  transition: transform 0.4s ease-in-out;
-  background-color: white;
-  &.visible {
-    transform: translateY(0);
-  }
-  .tag-nav-inner {
-    display: flex;
-    height: 56px;
-    align-items: center;
-    gap: 30px;
-    white-space: nowrap;
-    overflow-x: auto;
-    .tag-item {
-      margin: 0 10px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #333;
-      cursor: pointer;
-      padding: 5px 0;
-
-      &.active {
-        color: var(--primary-color);
-        font-weight: 600;
-
-        border-bottom: 3px solid var(--primary-color);
-      }
-    }
-  }
 }
 </style>
