@@ -64,6 +64,7 @@ watch(
   transform: translateY(-100%);
   transition: transform 0.4s ease-in-out;
   background-color: white;
+  overflow-x: auto;
   &.visible {
     transform: translateY(0);
   }
