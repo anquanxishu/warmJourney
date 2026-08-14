@@ -1,14 +1,24 @@
 <script setup>
 import TabBar from './components/tab-bar/TabBar.vue'
 import { useRoute } from 'vue-router'
+import { ref, provide } from 'vue'
+// 获取滚动容器的 DOM 引用
+const mainRef = ref(null)
+
+// 提供给所有子组件使用
+provide('scrollContainer', mainRef)
 </script>
 
 <template>
   <div class="container">
-    <div class="main">
-      <!-- 路由出口 -->
-      <!-- 加入key属性，防止路由切换时组件不更新或者同一路由不渲染 -->
-      <RouterView :key="$route.fullPath"></RouterView>
+    <div ref="mainRef" class="main">
+      <!-- keep-alive组件，用于缓存路由组件，避免重复渲染 -->
+
+      <RouterView v-slot="{ Component }">
+        <keep-alive :include="['Home']">
+          <component :is="Component" />
+        </keep-alive>
+      </RouterView>
     </div>
     <TabBar class="tabBar" v-show="useRoute().meta.showTabBar"></TabBar>
   </div>
@@ -25,7 +35,8 @@ import { useRoute } from 'vue-router'
   margin: auto;
   .main {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 </style>

@@ -52,7 +52,7 @@
     :tags="tags"
     :current-tag-index="currentTagIndex"
     :is-visible="isVisible"
-    @toTag="toTag"
+    @toTag="toTag(index, 'smooth')"
   />
 </template>
 
@@ -72,16 +72,19 @@ import { getDetailInfos } from './getDetailInfos.js'
 import { getHouseList } from '../home/homeRequest.js'
 import { getRandomInt } from '@/utils/randomUtils.js'
 import NavTab from './comps/NavTab.vue'
-
-const houseList = ref([])
-// 相似房屋
-// 先使用随机代替相似房屋数据
-getHouseList(getRandomInt(1, 1)).then((res) => {
-  houseList.value = res.data
-})
-
 const router = useRouter()
 const route = useRoute()
+const houseList = ref([])
+
+// 相似房屋
+// 先使用随机代替相似房屋数据
+getHouseList(getRandomInt(1, 1))
+  .then((res) => {
+    houseList.value = res.data
+  })
+  .catch((err) => {
+    console.log(err)
+  })
 
 // 房屋详情
 const houseDetail = ref({})
@@ -94,6 +97,32 @@ getDetailInfos(route.query.houseId)
   .catch((err) => {
     console.log(err)
   })
+
+watch(
+  () => route.query.houseId,
+  (newVal) => {
+    if (newVal) {
+      console.log(newVal)
+      getDetailInfos(newVal)
+        .then((res) => {
+          houseDetail.value = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      getHouseList(getRandomInt(1, 1))
+        .then((res) => {
+          houseList.value = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      toTag(0, 'instant')
+    }
+  },
+)
 
 const mainPart = computed(() => houseDetail.value.mainPart)
 // 当前房屋
@@ -108,14 +137,14 @@ const isVisible = ref(false)
 const isUseNav = ref(false)
 
 // 切换标签并滚动到对应位置
-const toTag = (index) => {
+const toTag = (index, behavior) => {
   isUseNav.value = true
   currentTagIndex.value = Number(index)
 
   // 滚动到对应位置
   const tagItems = document.querySelectorAll('.toTag')
   tagItems[index].scrollIntoView({
-    behavior: 'smooth',
+    behavior: behavior,
     block: 'center',
   })
   setTimeout(() => {
