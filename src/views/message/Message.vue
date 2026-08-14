@@ -5,8 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onActivated, onDeactivated } from 'vue'
-onsole.log('组件被停用')
+import { ref } from 'vue'
 </script>
 
 <style scoped lang="scss"></style>

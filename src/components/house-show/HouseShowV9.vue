@@ -1,36 +1,37 @@
 <template>
   <div class="houseShowV9">
-    <img :src="houseList.image.url" alt="" />
+    <img :src="house.image.url" alt="" />
     <!-- 房屋信息 -->
     <div class="homeHouseShow-info-container">
       <div class="homeHouseShow-bottom">
         <div class="homeHouseShow-info">
-          <div>{{ houseList.summaryText }}</div>
-          <div>{{ houseList.houseName }}</div>
+          <div>{{ house.summaryText }}</div>
+          <div>{{ house.houseName }}</div>
           <!--评分和价格 一行 -->
           <div class="homeHouseShow-score-price">
             <!-- 评分使用图片展示 -->
-            <Rating :rating="Number(houseList.commentScore)" />
-            <span>￥{{ houseList.productPrice }}</span>
+            <Rating :rating="Number(house.commentScore)" />
+            <span>￥{{ house.productPrice }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 收藏按钮 -->
-    <Favor />
+    <Favor :house-item="houseItem" />
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Favor from '@/components/favor/Favor.vue'
 import Rating from '@/components/rating/Rating.vue'
-defineProps({
-  houseList: {
+const props = defineProps({
+  houseItem: {
     type: Object,
     default: () => {},
   },
 })
+const house = computed(() => props.houseItem.data)
 </script>
 
 <style scoped lang="scss">

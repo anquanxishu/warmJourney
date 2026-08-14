@@ -6,8 +6,8 @@
       class="houseShow-item"
       @click="toHouseDetail(item.data.houseId)"
     >
-      <HouseShowV9 :houseList="item.data" v-if="item.discoveryContentType === 9" />
-      <HouseShowV3 :houseList="item.data" v-else />
+      <HouseShowV9 :house-item="item" v-if="item.discoveryContentType === 9" />
+      <HouseShowV3 :house-item="item" v-else />
     </div>
 
     <!-- 加载更多 -->

@@ -23,11 +23,14 @@
         @click="goTo(index)"
       ></span>
     </div>
+    <!-- 收藏按钮 -->
+    <!-- <Favor /> -->
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, defineProps, computed } from 'vue'
+import Favor from '@/components/favor/Favor.vue'
 
 const props = defineProps({
   housePicture: {
