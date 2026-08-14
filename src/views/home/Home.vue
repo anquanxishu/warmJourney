@@ -24,9 +24,6 @@
       @loadMore="loadMore"
     />
   </div>
-  <div class="btn">
-    <button @click="bar">获取滚动位置</button>
-  </div>
 </template>
 <script setup>
 import { ref, onMounted, nextTick, onActivated, onDeactivated, inject } from 'vue'
@@ -41,9 +38,7 @@ import { onBeforeRouteLeave } from 'vue-router'
 
 // 注入父组件提供的滚动容器（它是一个 ref）
 const scrollContainer = inject('scrollContainer')
-const bar = () => {
-  console.log('滚动位置', scrollContainer.value.scrollTop)
-}
+
 // 保存离开时的滚动位置
 const savedScrollTop = ref(0)
 
@@ -54,7 +49,6 @@ const savedScrollTop = ref(0)
 // })
 // 在路由离开前执行（此时 DOM 还是完整的 Home 页面）
 onBeforeRouteLeave(() => {
-  bar()
   if (scrollContainer?.value) {
     // 此时读取到的绝对是真实有效的滚动位置
     savedScrollTop.value = scrollContainer.value.scrollTop

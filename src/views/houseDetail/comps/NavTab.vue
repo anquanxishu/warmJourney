@@ -7,7 +7,7 @@
         v-for="(tag, index) in tags"
         :key="index"
         :class="{ active: currentTagIndex == index }"
-        @click="$emit('toTag', index)"
+        @click="bar(index)"
       >
         {{ tag }}
       </div>
@@ -31,18 +31,26 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['toTag'])
-const bar = (newVal) => {
-  // 标签滚动到对应位置
+const currentIndex = ref(0)
+// 切换标签
+const toNavTag = (index) => {
+  currentIndex.value = index
   const tagNavItem = document.querySelectorAll('.tag-item')
-  tagNavItem[newVal].scrollIntoView({
+  tagNavItem[currentIndex.value].scrollIntoView({
     behavior: 'smooth',
     inline: 'center',
   })
 }
+// 点击标签切换标签并滚动到对应位置
+const bar = (index) => {
+  // 标签滚动到对应位置
+  toNavTag(index)
+  emit('toTag', index)
+}
 watch(
   () => props.currentTagIndex,
   (newVal) => {
-    bar(newVal)
+    toNavTag(newVal)
   },
 )
 </script>

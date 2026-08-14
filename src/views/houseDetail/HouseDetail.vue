@@ -50,9 +50,9 @@
   <!-- 标签导航 -->
   <NavTab
     :tags="tags"
-    :current-tag-index="currentTagIndex"
     :is-visible="isVisible"
-    @toTag="toTag(index, 'smooth')"
+    :current-tag-index="currentTagIndex"
+    @toTag="toTag"
   />
 </template>
 
@@ -102,7 +102,6 @@ watch(
   () => route.query.houseId,
   (newVal) => {
     if (newVal) {
-      console.log(newVal)
       getDetailInfos(newVal)
         .then((res) => {
           houseDetail.value = res.data
@@ -138,9 +137,12 @@ const isUseNav = ref(false)
 
 // 切换标签并滚动到对应位置
 const toTag = (index, behavior) => {
+  console.log('toTag', index, behavior)
   isUseNav.value = true
   currentTagIndex.value = Number(index)
-
+  if (!behavior) {
+    behavior = 'smooth'
+  }
   // 滚动到对应位置
   const tagItems = document.querySelectorAll('.toTag')
   tagItems[index].scrollIntoView({
