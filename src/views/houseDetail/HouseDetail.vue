@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue'
 import HouseDetailTop from './comps/HouseDetailTop.vue'
 import Banner from './comps/Banner.vue'
 import Infos from './comps/Infos.vue'
@@ -137,7 +137,6 @@ const isUseNav = ref(false)
 
 // 切换标签并滚动到对应位置
 const toTag = (index, behavior) => {
-  console.log('toTag', index, behavior)
   isUseNav.value = true
   currentTagIndex.value = Number(index)
   if (!behavior) {
@@ -154,8 +153,13 @@ const toTag = (index, behavior) => {
   }, 500)
 }
 const observed = ref(null)
+const infoObserver = ref(null)
+const tagObserver = ref(null)
+
 onMounted(() => {
-  const infoObserver = new IntersectionObserver((entries) => {
+  // 监听概览区域是否进入视口
+  // 如果进入视口，隐藏导航栏
+  infoObserver.value = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         isVisible.value = false
@@ -164,12 +168,15 @@ onMounted(() => {
       }
     })
   })
-  infoObserver.observe(observed.value)
-  const tagObserver = new IntersectionObserver(
+  infoObserver.value.observe(observed.value)
+
+  // 监听标签区域是否进入视口
+  // 如果进入视口，切换到对应标签
+  tagObserver.value = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (!isUseNav.value) {
+        if (!isUseNav.value) {
+          if (entry.isIntersecting) {
             currentTagIndex.value = Number(entry.target.dataset.index)
           }
         }
@@ -182,8 +189,13 @@ onMounted(() => {
   )
   document.querySelectorAll('.observedTag').forEach((item, index) => {
     item.dataset.index = index
-    tagObserver.observe(item)
+    tagObserver.value.observe(item)
   })
+})
+onUnmounted(() => {
+  // 组件卸载时，断开监听
+  infoObserver.value.disconnect()
+  tagObserver.value.disconnect()
 })
 </script>
 

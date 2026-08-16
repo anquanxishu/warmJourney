@@ -6,7 +6,7 @@
         class="tag-item"
         v-for="(tag, index) in tags"
         :key="index"
-        :class="{ active: currentTagIndex == index }"
+        :class="{ active: currentIndex == index }"
         @click="bar(index)"
       >
         {{ tag }}
