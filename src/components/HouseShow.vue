@@ -12,11 +12,19 @@
 
     <!-- 加载更多 -->
     <div v-if="loading">加载中...</div>
-    <div v-if="!loading && hasMore" class="load-more" @click="$emit('loadMore')">加载下一页</div>
+    <div
+      ref="lmBut"
+      id="lm1"
+      v-if="!loading && hasMore"
+      class="load-more"
+      @click="$emit('loadMore')"
+    >
+      加载下一页
+    </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, defineProps, defineEmits } from 'vue'
+import { ref, onUnmounted, defineProps, defineEmits, nextTick, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
 import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
@@ -49,18 +57,27 @@ const toHouseDetail = (houseId) => {
     },
   })
 }
+const lmBut = ref(null)
+// 监听加载更多按钮是否进入视口
+const a = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    emit('loadMore')
+  }
+})
 
-onMounted(() => {
-  // const a = new IntersectionObserver((entries) => {
-  //   if (entries[0].isIntersecting) {
-  //     // emit('loadMore')
-  //     loadMore(1)
-  //     // houseList.value.push(...loadMore(page.value))
-  //   }
-  // })
-  // a.observe(loadMore.value)
+onUpdated(async () => {
+  a.disconnect()
+  await nextTick()
+  if (lmBut.value) {
+    a.observe(lmBut.value)
+  }
+})
+onUnmounted(() => {
+  // 组件卸载时，断开监听
+  a.disconnect()
 })
 </script>
+
 <style scoped lang="scss">
 .houseShow {
   display: flex;
