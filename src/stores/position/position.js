@@ -12,4 +12,5 @@ export const usePositionStore = defineStore('position', {
     getCurrentCityName: (state) => state.currentCity.cityName,
     getCurrentCityId: (state) => state.currentCity.cityId,
   },
+  persist: true,
 })

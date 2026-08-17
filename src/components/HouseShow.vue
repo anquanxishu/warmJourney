@@ -24,7 +24,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onUnmounted, defineProps, defineEmits, nextTick, onUpdated } from 'vue'
+import { ref, onUnmounted, nextTick, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import HouseShowV9 from '@/components/house-show/HouseShowV9.vue'
 import HouseShowV3 from '@/components/house-show/HouseShowV3.vue'
