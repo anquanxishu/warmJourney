@@ -9,9 +9,20 @@
         <span @click="tab = 'foreign'" :class="{ active: tab === 'foreign' }">国外</span>
       </div>
     </div>
+    <!-- 搜索建议列表 -->
+    <div class="search-item-container" v-if="searchText">
+      <div
+        class="search-item"
+        v-for="city in searchCity"
+        :key="city.cityName"
+        @click="handleClick(city)"
+      >
+        {{ city.cityName }}
+      </div>
+    </div>
 
     <!-- 城市列表容器 -->
-    <div class="position-cities-container">
+    <div class="position-cities-container" v-show="searchText === ''">
       <!-- 热门城市 -->
       <div class="position-hot-cities">
         <div><span class="temp"></span> 热门城市</div>
@@ -61,14 +72,14 @@
   <!-- // 城市列表 -->
 </template>
 <script setup>
-import { ref, computed } from 'vue' // 导入 ref 创建响应式数据，computed 计算属性，根据 tab 切换显示城市或省份列表
+import { ref, computed, watch, onUnmounted } from 'vue' // 导入 ref 创建响应式数据，computed 计算属性，根据 tab 切换显示城市或省份列表
 import { useRouter } from 'vue-router' // 获取路由实例
 import { getCitiesAll } from '@/views/position/getCites' // 导入获取城市数据的函数
 import Search from '@/views/position/components/Search.vue' // 导入搜索栏组件
 import { usePositionStore } from '@/stores/position/position.js' // 导入位置状态管理
 const positionStore = usePositionStore() // 实例化位置状态管理
 import { storage } from '@/utils/localStorage.js' // 导入本地存储工具
-
+import { debounce } from 'lodash-es'
 const router = useRouter() // 路由实例，用于返回
 
 const searchText = ref('') // 搜索关键词，响应式
@@ -114,13 +125,36 @@ const handleClickLetter = (letter) => {
     })
   }
 }
+const searchCity = ref([])
+const updateSearchCity = (value) => {
+  if (value) {
+    searchCity.value = cityList.value?.cities?.flatMap((item) =>
+      item.cities.filter((city) => city.cityName.includes(value)),
+    )
+  } else {
+    searchCity.value = []
+  }
+}
+
+// 搜索城市，防抖处理，避免频繁触发
+const debounceUpdateSearchCity = debounce(updateSearchCity, 1000)
+watch(
+  () => searchText.value,
+  (newVal) => {
+    debounceUpdateSearchCity(newVal)
+  },
+)
+onUnmounted(() => {
+  debounceUpdateSearchCity.cancel()
+})
 </script>
+
 <style scoped lang="scss">
 .container {
   display: flex;
 
   .position-search-container {
-    flex: 1;
+    // flex: 1;
     .position-search {
       position: sticky;
       top: 0;
@@ -133,6 +167,17 @@ const handleClickLetter = (letter) => {
         color: var(--primary-color);
         font-weight: 500;
       }
+    }
+  }
+  // 搜索建议列表
+  .search-item-container {
+    margin-top: 10px;
+    .search-item {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 500;
+      padding: 10px;
+      border-bottom: solid 1px #d1d5db;
     }
   }
   // 城市列表容器
@@ -162,52 +207,51 @@ const handleClickLetter = (letter) => {
         background: var(--tjc-theme, #ff9645);
       }
       .position-hot-cities-list {
-        margin: 10px 0 0;
+        margin: 10px 5px;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         gap: 10px;
 
         div {
-          height: 25px;
+          height: 30px;
+          line-height: 30px;
+          width: 60px;
+          white-space: nowrap;
           border-radius: 50px;
           background-color: var(--primary-color);
           border: solid 1px #d1d5db;
-          padding: 4px 8px;
+          // padding: 4px 8px;
           text-align: center;
-          font-size: 18px;
+          font-size: 16px;
           color: #1f2937;
           font-weight: 500;
           // margin: 5px;
-          padding: 10px 20px;
+          // padding: 10px 20px;
         }
       }
     }
     // 城市列表
     .position-cities {
-      border: solid 1px #d1d5db;
+      // border: solid 1px #d1d5db;
       .position-letter {
-        font-size: 18px;
+        font-size: 16px;
         color: #1f2937;
         font-weight: 500;
-        margin-bottom: 10px;
         background-color: #ecf1f6;
-        padding: 5px;
+        padding: 10px;
       }
       .position-city {
-        font-size: 15px;
+        font-size: 14px;
         color: #1f2937;
         font-weight: 500;
-        margin-bottom: 10px;
-        padding: 5px;
+        // margin-bottom: 10px;
+        padding: 10px;
         border-bottom: solid 1px #d1d5db;
       }
     }
     // 字母检索
     .position-letter-search {
-      // border: solid 1px #3d5a84;
-      // background-color: #b7c4d1;
-      // padding: 5px;
       width: 15px;
       position: fixed;
       right: 5px;
